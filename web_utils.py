@@ -1,7 +1,7 @@
-# Для отправки запросов
 # Для ожидания
 from time import sleep
 
+# Для отправки запросов
 import requests
 # Для логирования действий
 from loguru import logger
