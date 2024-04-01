@@ -3,7 +3,8 @@ import web_utils
 
 links = [
     'https://stackoverflow.com/questions/71647566/blockchain-token-mint-error-nonce-too-low-address-0x1-f-current-nonce-491',
-    'https://www.digitalocean.com/community/tutorials/python-str-repr-functions']
+    'https://www.digitalocean.com/community/tutorials/python-str-repr-functions',
+    'https://scam-alert.io/']
 
 
 def get_web_page(url):
@@ -16,16 +17,16 @@ def parser_html_and_find_address(html: str):
     :param html: str with words
     :return: list of CheckCryptoResponse
     """
-    word_list = html.split(" ")
     result = []
-    for word in word_list:
-        response = address_parser.check_is_word_any_crypto(word)
-        if response is not None:
-            result.append(response)
+    if html is not None :
+        word_list = html.split(" ")
+        for word in word_list:
+            response = address_parser.check_is_word_any_crypto(word)
+            if response is not None:
+                result.append(response)
     return result
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     result_for_task = {}
     for link in links:
@@ -34,5 +35,3 @@ if __name__ == '__main__':
         if len(result_for_link) > 0:
             result_for_task[link] = result_for_link
     print(f'Удалось найти адреса: {result_for_task}')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
