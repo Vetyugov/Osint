@@ -1,4 +1,4 @@
-import address_parser
+from crypto_address_parser import address_parser
 import web_utils
 
 links = [

@@ -1,6 +1,6 @@
 import time
 
-import address_parser
+from crypto_address_parser import address_parser
 from main import get_web_page
 
 links = [
