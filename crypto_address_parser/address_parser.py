@@ -170,7 +170,7 @@ if __name__ == '__main__':
     # Пример одного найденного адреса в тексте (33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL)
     crypto_parser = CryptoAddressParser(context_size=10)
     list_of_results = crypto_parser.check_is_text_contains_crypto(
-        text='ass="d-none d-sm-block d-md-none">33yPjjSMGHPp...zSUfVSbpXEuL</span><span class="d-sm-none">33yPj...pXEuL</span></span>\n<div><a href="https://blockstream.info/address/33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL" target="_blank" class="text-font-size-md text-font-size-sm" style="font-style: ',
+        text='ass="d-none d-sm-block d-md-none">33yPjjSMGHPp...zSUfVSbpXEuL</span><span class="d-sm-none">33yPj...pXEuL</span></span>\n<div><a href="https://blockstream.info/address/ 33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL" target="_blank" class="text-font-size-md text-font-size-sm" style="font-style: ',
         source='какая-то ссылка или источник'
     )
     print('Если в тексте 1 адрес = ' + str(list_of_results))
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     # Пример двух найденного адреса в тексте (33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL и 3ABCD33yPjjSMGHPp8zj1ZXySfVSbpXEuL)
     crypto_parser = CryptoAddressParser(context_size=10)
     list_of_results = crypto_parser.check_is_text_contains_crypto(
-        text='ass="d-none d-sm-block d-md-none">33yPjjSMGHPp...zSUfVSbpXEuL</span>3ABCD33yPjjSMGHPp8zj1ZXySfVSbpXEuL<span class="d-sm-none">33yPj...pXEuL</span></span>\n<div><a href="https://blockstream.info/address/33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL" target="_blank" class="text-font-size-md text-font-size-sm" style="font-style: ',
+        text='ass="d-none d-sm-block d-md-none">33yPjjSMGHPp...zSUfVSbpXEuL</span>3ABCD33yPjjSMGHPp8zj1ZXySfVSbpXEuL<span class="d-sm-none">33yPj...pXEuL</span></span>\n<div><a href="https://blockstream.info/address/ 33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL" target="_blank" class="text-font-size-md text-font-size-sm" style="font-style: ',
         source='какая-то ссылка или источник'
     )
     print('Если в тексте 2 адреса = ' + str(list_of_results))
