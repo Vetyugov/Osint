@@ -41,7 +41,7 @@ def parse_by_text():
             print(f'Исследован текст длиной {len(html)} символов, время проверки текста = {time.time() - t1}')
         print(result)
 
-
+# Тесты
 if __name__ == '__main__':
     parse_by_word()
     parse_by_text()

@@ -27,7 +27,7 @@ def is_valid(url):
     return bool(parsed.netloc) and bool(parsed.scheme)
 
 
-def get_all_website_links(url):
+def get_all_website_links(url, put_internal_links=True, put_external_links=False):
     """
     Возвращает все найденные URL-адреса на `url, того же веб-сайта.
     """
@@ -35,32 +35,39 @@ def get_all_website_links(url):
     urls = set()
     # доменное имя URL без протокола
     domain_name = urlparse(url).netloc
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
-    for a_tag in soup.findAll("a"):
-        href = a_tag.attrs.get("href")
-        if href == "" or href is None:
-            # пустой тег href
-            continue
-        # присоединяемся к URL, если он относительный (не абсолютная ссылка)
-        href = urljoin(url, href)
-        parsed_href = urlparse(href)
-        # удалить параметры URL GET, фрагменты URL и т. д.
-        href = parsed_href.scheme + "://" + parsed_href.netloc + parsed_href.path
-        if not is_valid(href):
-            # неверный URL
-            continue
-        if href in internal_urls:
-            # уже в наборе
-            continue
-        if domain_name not in href:
-            # внешняя ссылка
-            if href not in external_urls:
-                print(f"{GRAY}[!] Внешняя ссылка: {href}{RESET}")
-                external_urls.add(href)
-            continue
-        print(f"{GREEN}[*] Внутреннея ссылка: {href}{RESET}")
-        urls.add(href)
-        internal_urls.add(href)
+    try:
+
+        soup = BeautifulSoup(requests.get(url).content, "html.parser")
+        for a_tag in soup.findAll("a"):
+            href = a_tag.attrs.get("href")
+            if href == "" or href is None:
+                # пустой тег href
+                continue
+            # присоединяемся к URL, если он относительный (не абсолютная ссылка)
+            href = urljoin(url, href)
+            parsed_href = urlparse(href)
+            # удалить параметры URL GET, фрагменты URL и т. д.
+            href = parsed_href.scheme + "://" + parsed_href.netloc + parsed_href.path
+            if not is_valid(href):
+                # неверный URL
+                continue
+            if href in internal_urls:
+                # уже в наборе
+                continue
+            if domain_name not in href:
+                # внешняя ссылка
+                if href not in external_urls:
+                    print(f"{GRAY}[!] Внешняя ссылка: {href}{RESET}")
+                    external_urls.add(href)
+                continue
+            print(f"{GREEN}[*] Внутреннея ссылка: {href}{RESET}")
+            internal_urls.add(href)
+    except (ConnectionError, OSError) as err:
+        print(f'Не удалось загрузить список ссылок со страницы url = {url}', err)
+    if put_internal_links:
+        urls.update(internal_urls)
+    if put_external_links:
+        urls.update(external_urls)
     return urls
 
 
@@ -81,6 +88,7 @@ def crawl(url, max_urls=30):
         crawl(link, max_urls=max_urls)
 
 
+# Тесты
 if __name__ == "__main__":
 
     """

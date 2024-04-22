@@ -6,7 +6,7 @@ import requests
 # Для логирования действий
 from loguru import logger
 
-ATTEMPTS = 3  # Кол-во попыток получения ответа
+ATTEMPTS = 2  # Кол-во попыток получения ответа
 
 
 def get_json_from(url):
