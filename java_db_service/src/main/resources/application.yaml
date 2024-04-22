@@ -1,0 +1,41 @@
+server:
+  port: 8190
+  servlet:
+    context-path: /JIS
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+spring:
+  application:
+    name: Osint_db_service
+  datasource:
+    url: jdbc:sqlite:data.db
+    dbcp2:
+      test-on-borrow: true
+      validation-query: SELECT 1;
+      test-while-idle: true
+    hikari:
+      max-lifetime: 60000
+      maximum-pool-size: 100
+  jpa:
+    spring.datasource.url=
+    spring.jpa.database-platform=org.hibernate.dialect.SQLiteDialect
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    root: info
+    ru.get: debug
+    org.springframework.web: info
+    org.hibernate: error
+  file:
+    name: ./Logs/isBackend.log
+  charset:
+    console: UTF-8
+    file: UTF-8
