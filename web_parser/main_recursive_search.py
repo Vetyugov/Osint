@@ -19,7 +19,7 @@ MAX_RECURSION_DEPTH = 3
 try_count = 0
 results = []
 
-db_service = DataBaseService('osint_db.sqlite')
+db_service = DataBaseService()
 
 def recursive_search(link, from_link = None, recursion_depth=0):
 

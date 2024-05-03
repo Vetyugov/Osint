@@ -1,7 +1,7 @@
 server:
   port: 8190
   servlet:
-    context-path: /JIS
+    context-path: /OSINT
   error:
     include-message: always
     include-binding-errors: always
@@ -10,24 +10,31 @@ server:
 spring:
   application:
     name: Osint_db_service
+
   datasource:
-    url: jdbc:sqlite:data.db
+    url: jdbc:postgresql://localhost:5431/osint_db
+    username: osint_admin
+    password: osint_admin
+    driverClassName: org.postgresql.Driver
     dbcp2:
       test-on-borrow: true
       validation-query: SELECT 1;
+      validation-query-timeout: 30000
       test-while-idle: true
+      time-between-eviction-runs-millis: 60000
     hikari:
       max-lifetime: 60000
-      maximum-pool-size: 100
+      maximum-pool-size: 10
   jpa:
-    spring.datasource.url=
-    spring.jpa.database-platform=org.hibernate.dialect.SQLiteDialect
     database: POSTGRESQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+  flyway:
+    enabled: true
+
 logging:
   level:
     root: info

@@ -1,0 +1,10 @@
+input:required {
+  border-color: #333366;
+  border-width: 3px;
+}
+
+input:required:invalid {
+  border-color: #c00000;
+}
+
+

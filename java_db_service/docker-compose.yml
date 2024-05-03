@@ -1,0 +1,11 @@
+services:
+
+  osint-db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: osint_admin
+      POSTGRES_PASSWORD: osint_admin
+      POSTGRES_DB: osint_db
+    ports:
+      - 5431:5432

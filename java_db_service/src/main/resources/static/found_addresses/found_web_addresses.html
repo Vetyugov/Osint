@@ -1,0 +1,45 @@
+<div>
+    <p></p>
+    <h3>Каталог адресов</h3>
+    <p></p>
+
+    <div class="row g-2">
+        <div class="col-6 col-md-2">
+            <button ng-click="loadFoundAddresses()">Обновить</button>
+        </div>
+        <div class="col-sm-6 col-md-10">
+            <table class="table table-hover">
+                <tr>
+<!--                    <td hidden>ID</td>-->
+                    <td>Тип поиска</td>
+                    <td>Название криптовалюты</td>
+                    <td>Адрес</td>
+                    <td>Контекст</td>
+                    <td>Ссылка</td>
+                    <td></td>
+                </tr>
+<!--                <tbody>-->
+                <tr ng-repeat="a in FoundAddressesPage.content">
+<!--                    <td hidden>{{a.id}}</td>-->
+                    <td>{{a.searchType}}</td>
+                    <td>{{a.cryptoName}}</td>
+                    <td>{{a.address}}</td>
+                    <td>{{a.context}}</td>
+                    <td>{{a.source}}</td>
+                    <td>
+                        <button class="btn btn-primary" ng-click="addToBooking(a.id)">Подтвердить</button>
+                    </td>
+                </tr>
+<!--                </tbody>-->
+            </table>
+            <p></p>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item" ng-repeat="pageIndex in paginationArray">
+                        <button class="page-link" ng-click="loadFoundAddresses(pageIndex)">{{pageIndex}}</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
