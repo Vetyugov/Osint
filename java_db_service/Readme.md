@@ -39,3 +39,10 @@ https://www.docker.com/products/docker-desktop/
 
 ![img.png](images/img_logs.png)
 
+## Визуализация на фронте
+Для отображения на фронте вкладки по своим найденным адресам необходимо повторить те же классы для и для web адресов:
+1. Создать классы с моделью данных ```src/main/java/ru/mipt/osint_db_service/model```
+2. Создать классы репозитория для работы с моделью в БД ```src/main/java/ru/mipt/osint_db_service/repository```
+3. Создать сервис для работы с репозиторием ```src/main/java/ru/mipt/osint_db_service/service```
+4. Создать отдельный контроллер для предоставления API ```src/main/java/ru/mipt/osint_db_service/controller```
+5. Создать отдельную вкладку на фронте для визуализации БД ```src/main/resources/static```
