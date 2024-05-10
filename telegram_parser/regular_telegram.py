@@ -1,5 +1,4 @@
 import re
-
 # Паттерны для адресов Биткоина
 BTC_ADDRESSES_REGEX_PATTERNS = {
     # В тексте

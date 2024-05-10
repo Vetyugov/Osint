@@ -1,7 +1,5 @@
 import configparser
 from telethon.sync import TelegramClient
-
-
 def connect_to_telegram():
     # Чтение параметров из файла auth_telegram.ini
     config = configparser.ConfigParser()

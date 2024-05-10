@@ -1,6 +1,4 @@
 import csv
-
-
 def read_files_for_telegram():
     handy_search_telegram = []
     with open('handy_search_telegram.csv', 'r') as csvfile:

@@ -1,21 +1,31 @@
 import re
 import json
 import os
-import datetime
 import time
+from datetime import datetime
 
 from telethon.tl.functions.messages import GetHistoryRequest
 from telethon.tl.functions.contacts import SearchRequest
-from telegram_parser.main_osint_telegram import handly_search, ethereum_pattern, bitcoin_pattern, client, keywords
+from telethon.errors.rpcerrorlist import RpcCallFailError
 
+from connect_to_telegram import connect_to_telegram
+from connect_bd_telegram import save_to_postgresql
+from telegram_parser import regular_telegram
+
+client = connect_to_telegram()
 
 # Функция для поиска каналов и чатов по ключевым словам, каналам и чатам
-async def search_channels_and_chats():
+
+# Определение регулярных выражений для поиска криптокошельков
+ethereum_pattern = regular_telegram.PATTERNS['ETH']['ETH address']
+bitcoin_pattern = regular_telegram.PATTERNS['BTC']['BTC Legacy address']
+
+async def search_channels_and_chats(handy_search_telegram, client, keywords):
     channels_and_chats = []
     unique_chats = set()
 
     # Поиск по определенным каналам и чатам
-    for chat in handly_search:
+    for chat in handy_search_telegram:
         try:
             entity = await client.get_entity(chat)
             if entity.megagroup or entity.broadcast:
@@ -57,6 +67,7 @@ async def search_crypto_wallets(chat_entity):
     wallets_found = []
     chat_name = f"{chat_entity.title} ({chat_entity.id})"
     last_message_id = 0
+    retries = 3  # Количество повторных попыток
     while True:
         try:
             messages = await client(GetHistoryRequest(
@@ -94,6 +105,14 @@ async def search_crypto_wallets(chat_entity):
                             "wallets": bitcoin_wallets
                         })
             last_message_id = messages.messages[-1].id
+        except RpcCallFailError as e:
+            if retries > 0:
+                print(f"Ошибка при получении сообщений для {chat_name}: {e}. Повторная попытка...")
+                retries -= 1
+                time.sleep(5)  # Ждем 5 секунд перед повторной попыткой
+            else:
+                print(f"Достигнуто максимальное количество повторных попыток для {chat_name}. Пропускаем.")
+                break
         except Exception as e:
             print(f"Ошибка при получении сообщений для {chat_name}: {e}")
             break
@@ -117,3 +136,13 @@ async def export_to_json(chat_entity):
         end_time = time.time()
         execution_time = end_time - start_time
         print(f"Поиск и выгрузка данных для {chat_name} завершены за {execution_time} секунд")
+
+# Функция для выгрузки данных в базу данных PostgreSQL
+async def export_to_postgresql(chat_entity):
+    start_time = time.time()
+    wallets_found = await search_crypto_wallets(chat_entity)
+    if wallets_found:
+        await save_to_postgresql(wallets_found)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Поиск и выгрузка данных для завершены за {execution_time} секунд")
