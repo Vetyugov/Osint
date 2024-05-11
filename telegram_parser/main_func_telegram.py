@@ -14,8 +14,6 @@ from telegram_parser import regular_telegram
 
 client = connect_to_telegram()
 
-# Функция для поиска каналов и чатов по ключевым словам, каналам и чатам
-
 # Определение регулярных выражений для поиска криптокошельков
 ethereum_pattern = regular_telegram.PATTERNS['ETH']['ETH address']
 bitcoin_pattern = regular_telegram.PATTERNS['BTC']['BTC Legacy address']
