@@ -1,0 +1,13 @@
+insert into osint_web.web_sources_links (id, link, analyzed_time, active)
+values  (1, 'https://ofac.treasury.gov/', '2024-05-28 21:31:37.000000', true),
+        (2, 'https://exchangeyourmoney.com/', '2024-05-28 21:32:25.000000', true),
+        (3, 'https://ofac.treasury.gov/recent-actions', '2024-05-28 21:32:27.000000', true),
+        (4, 'https://cryptoscamdb.org/', '2024-05-28 21:32:28.000000', true),
+        (5, 'https://www.chainabuse.com/', '2024-05-28 21:32:28.000000', true),
+        (6, 'https://start.me/p/ek4rxK/cryptocurrency', '2024-05-28 21:32:30.000000', true),
+        (7, 'https://ru.investing.com/crypto/bitcoin/chat', '2024-05-28 21:33:41.000000', true),
+        (8, 'https://ru.investing.com/crypto/', '2024-05-28 21:33:43.000000', true),
+        (9, 'https://forum.bits.media/', '2024-05-28 21:34:18.000000', true),
+        (10, 'https://smart-lab.ru/trading/', '2024-05-28 21:35:01.000000', true),
+        (11, 'https://smart-lab.ru/crypto/', '2024-05-28 21:35:24.000000', true),
+        (12, 'https://mfd.ru/forum/', '2024-05-28 21:37:03.000000', true);

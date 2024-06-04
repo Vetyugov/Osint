@@ -23,8 +23,11 @@ def is_valid(url):
     """
     Проверка url
     """
-    parsed = urlparse(url)
-    return bool(parsed.netloc) and bool(parsed.scheme)
+    try:
+        parsed = urlparse(url)
+        return bool(parsed.netloc) and bool(parsed.scheme)
+    except (ValueError, TypeError):
+        return False
 
 
 def get_all_website_links(url, put_internal_links=True, put_external_links=False):

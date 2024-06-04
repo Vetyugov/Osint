@@ -47,3 +47,6 @@ def get_html_from(url):
             logger.debug(f"<GET {i} failed {url}, {e}")
             sleep(3)
     return None
+
+def validate_link(url:str):
+    return not url.startswith('http')

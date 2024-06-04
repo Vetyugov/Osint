@@ -1,4 +1,4 @@
-package ru.mipt.osint_db_service.controller;
+package ru.mipt.osint_db_service.controller.webParsing;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mipt.osint_db_service.model.webParsing.WebFoundAddress;
+import ru.mipt.osint_db_service.model.webParsing.WebSourcesLink;
 import ru.mipt.osint_db_service.service.webParsing.WebFoundAddressService;
 
 @RestController

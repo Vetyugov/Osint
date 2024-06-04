@@ -19,6 +19,9 @@ public class WebSourcesLink {
     @Column(name = "link", nullable = false, length = Integer.MAX_VALUE)
     private String link;
 
+    @Column(name = "active", length = Integer.MAX_VALUE)
+    private boolean active;
+
     @Column(name = "analyzed_time", length = Integer.MAX_VALUE)
     private String analyzedTime;
 

@@ -1,4 +1,3 @@
-import sqlite3
 import psycopg2
 from datetime import datetime
 
@@ -24,10 +23,18 @@ class WebFoundAddress:
 
 
 class WebSourceLink:
-    def __init__(self, id, link: str, analyzed):
+    def __init__(self, id, link: str, analyzed_time, active: bool = True):
         self.id = id
         self.link = link
-        self.analyzed = analyzed
+        self.analyzed_time = analyzed_time
+        self.active = active
+
+    def __repr__(self):
+        return 'id = ' + str(self.id) + ' , link = ' + self.link + ',  active = ' + str(self.active)
+
+    def __str__(self):
+        return 'id = ' + str(self.id) + ' , link = ' + self.link + ',  active = ' + str(self.active)
+
 
 
 SQLITE_FILE_PATH = './web_monitoring.sqlite'
@@ -50,10 +57,14 @@ class DataBaseService:
 
 
     def get_all_links_for_analize(self):
+        """
+        :return: Возвращает ссылки, которые необходимо проанализировать (флаг active = true)
+        """
         cursor = self.connection.cursor()
-        cursor.execute('SELECT * FROM osint_web.web_sources_links WHERE analyzed_time IS NULL OR STRFTIME(\'%Y-%m-%d\', analyzed_time) < (STRFTIME(\'%Y-%m-%d\', CURRENT_DATE) - INTERVAL \'1 day\')')
+        # cursor.execute('SELECT * FROM osint_web.web_sources_links WHERE analyzed_time IS NULL OR STRFTIME(\'%Y-%m-%d\', analyzed_time) < (STRFTIME(\'%Y-%m-%d\', CURRENT_DATE) - INTERVAL \'1 day\')')
+        cursor.execute('SELECT * FROM osint_web.web_sources_links WHERE active = true')
         web_sources_links = cursor.fetchall()
-        return [WebSourceLink(link[0], link[1], link[2]) for link in web_sources_links]
+        return [WebSourceLink(link[0], link[1], link[2], link[3]) for link in web_sources_links]
 
     def get_all_parsed_links(self):
         cursor = self.connection.cursor()
@@ -70,8 +81,8 @@ class DataBaseService:
     def save_new_parsed_link(self, new: WebParsedLink):
         cursor = self.connection.cursor()
         cursor.execute(
-            'INSERT INTO osint_web.web_parsed_link (link,link_from) VALUES (%s, %s)',
-            (new.link, new.link_from))
+            'INSERT INTO osint_web.web_parsed_link (link,link_from, last_monitoring_time) VALUES (%s, %s, %s)',
+            (new.link, new.link_from, new.last_monitoring_time))
         self.connection.commit()
 
     def get_all_found_addresses(self):
