@@ -11,6 +11,7 @@
             <table class="table table-hover">
                 <tr>
 <!--                    <td hidden>ID</td>-->
+                    <td>Время</td>
                     <td>Тип поиска</td>
                     <td>Название криптовалюты</td>
                     <td>Адрес</td>
@@ -21,6 +22,7 @@
 <!--                <tbody>-->
                 <tr ng-repeat="a in FoundAddressesPage.content">
 <!--                    <td hidden>{{a.id}}</td>-->
+                    <td>{{a.foundTime}}</td>
                     <td>{{a.searchType}}</td>
                     <td>{{a.cryptoName}}</td>
                     <td>{{a.address}}</td>

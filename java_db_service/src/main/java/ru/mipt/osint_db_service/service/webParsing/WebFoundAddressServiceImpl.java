@@ -14,6 +14,6 @@ public class WebFoundAddressServiceImpl implements WebFoundAddressService {
     private final WebFoundAddressRepository webFoundAddressRepository;
     @Override
     public Page<WebFoundAddress> findAll(Integer page) {
-        return webFoundAddressRepository.findAll(PageRequest.of(page - 1, 8));
+        return webFoundAddressRepository.getAllOrderByFoundTimeDesc(PageRequest.of(page - 1, 30));
     }
 }

@@ -95,8 +95,8 @@ class DataBaseService:
     def save_new_found_address(self, new: WebFoundAddress):
         cursor = self.connection.cursor()
         cursor.execute(
-            'INSERT INTO osint_web.web_found_address (crypto_name, pattern_name, address, context, source) VALUES (%s, %s, %s, %s, %s)',
-            (new.crypto_name, new.pattern_name, new.address, new.context, new.source))
+            'INSERT INTO osint_web.web_found_address (crypto_name, pattern_name, address, context, source, found_time) VALUES (%s, %s, %s, %s, %s, %s)',
+            (new.crypto_name, new.pattern_name, new.address, new.context, new.source, new.found_time.strftime("%Y-%m-%d %H:%M:%S")))
         self.connection.commit()
 
 

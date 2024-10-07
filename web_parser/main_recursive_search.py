@@ -3,11 +3,15 @@ import logging
 import pandas as pd
 
 from link_extractor import get_all_website_links
-from web_utils import get_html_from, validate_link
+from web_utils import get_static_html_from, validate_link, get_text_from_html
 from crypto_address_parser.address_parser import CryptoAddressParser
 from db_service import DataBaseService, WebParsedLink, WebFoundAddress
 from datetime import datetime
 
+# TODO: 1. Добавить поиск других крипто адресов
+# TODO: 2. На фронте добавить больше функционала
+# TODO: 3. Написать docker.compose для автоматического развертывания приложения
+# TODO: 4. Обрезать контекст по предложению
 
 logging.basicConfig(level=logging.INFO, filename="metrics_log.log", filemode="w")
 # Время врохода по каждой ссылке
@@ -21,14 +25,25 @@ metric_times = []
 # Количество проходов по рекурсии в рамках одной mail_link
 metric_recursion_counter = 0
 
-
 MAX_RECURSION_DEPTH = 3
+PARSE_URL_AS_STATIC_PAGES = True  # Иначе получить html как динамическую страницу
 try_count = 0
 results = []
 
 db_service = DataBaseService()
 
-def recursive_search(link, from_link = None, recursion_depth=0):
+
+def get_text_from_url(link):
+    if 'https://www.youtube' in link:
+        print(f'Ccылка {link} ведет на youtube - пропускаем')
+        return None
+    if PARSE_URL_AS_STATIC_PAGES:
+        return get_text_from_html(get_static_html_from(link))
+    else:
+        print(f'ОШИБКА, установлен флаг PARSE_URL_AS_STATIC_PAGES = {PARSE_URL_AS_STATIC_PAGES}')
+
+
+def recursive_search(link, from_link=None, recursion_depth=0):
     global metric_recursion_counter
     metric_recursion_counter += 1
     metric_start_time = time.time()
@@ -45,17 +60,19 @@ def recursive_search(link, from_link = None, recursion_depth=0):
     try_count += 1
 
     metric_read_html = time.time()
-    html = get_html_from(link)
-    metric_times_single.insert(0, (time.time()-metric_read_html))
-    if html is not None:
+    text = get_text_from_url(link)
+    metric_times_single.insert(0, (time.time() - metric_read_html))
+    if text is not None:
         metric_parse = time.time()
-        found = crypto_address_parser.check_is_text_contains_crypto(html, source=link)
+        found = crypto_address_parser.check_is_text_contains_crypto(text, source=link)
         metric_times_single.insert(1, (time.time() - metric_parse))
         if len(found) > 0:
             print(f'найден адрес {found}')
             metric_save_db = time.time()
             for f in found:
-                db_service.save_new_found_address(WebFoundAddress(None, f.crypto_Name.name, f.pattern_Name, f.address, f.context, f.source, datetime.now()))
+                db_service.save_new_found_address(
+                    WebFoundAddress(None, f.crypto_Name.name, f.pattern_Name, f.address, f.context, f.source,
+                                    datetime.now()))
                 results.append(f)
             metric_times_single.insert(2, (time.time() - metric_save_db))
     metric_save_db_link = time.time()
@@ -72,6 +89,7 @@ def recursive_search(link, from_link = None, recursion_depth=0):
             print(f'Ссылка {sub_link} уже анализировалась')
         else:
             recursive_search(sub_link, link, recursion_depth)
+
 
 def save_metrics_to_csv(data):
     df = pd.DataFrame(data, columns=['html', 'parsing', 'address_db', 'link_db', 'total_time'])
@@ -97,5 +115,3 @@ if __name__ == '__main__':
     print(results)
     print('Сохраняем метрики...')
     save_metrics_to_csv(metric_times)
-
-
