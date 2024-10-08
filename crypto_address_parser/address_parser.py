@@ -11,6 +11,8 @@ class CryptoName(enum.Enum):
     """
     BTC = 0
     ETH = 1
+    DASH = 2
+    XMR = 3
 
 
 class CheckCryptoResponse:
@@ -32,6 +34,7 @@ class CheckCryptoResponse:
         return f'{self.crypto_Name.name} - {self.pattern_Name} address = {self.address} sourse = {self.source} context = {self.context} \n'
 
 
+#всё паттерны взяты с сайта https://gist.github.com/MBrassey/623f7b8d02766fa2d826bf9eca3fe005
 # \W - Любой символ, кроме буквенного или цифрового символа или знака подчёркивания
 # Паттерны для адресов Биткоина
 BTC_ADDRESSES_REGEX_PATTERNS = {
@@ -58,10 +61,29 @@ ETH_ADDRESSES_REGEX_PATTERNS = {
     'ETH address full': re.compile(r'^0x[0-9A-Fa-f]{40}$', re.M | re.S)
 }
 
+DASH_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'DASH address': re.compile(r'[^a-z0-9A-Z/]/X[1-9A-HJ-NP-Za-km-z]{33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'DASH address full': re.compile(r'/X[1-9A-HJ-NP-Za-km-z]{33}$', re.M | re.S)
+}
+
+#Monero (XMR)
+XMR_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'XMR address': re.compile(r'[^a-z0-9A-Z/]/4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'XMR address full': re.compile(r'/4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$', re.M | re.S)
+
+}
 # Словарь всех паттернов
 PATTERNS = {
     CryptoName.BTC: BTC_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.ETH: ETH_ADDRESSES_REGEX_PATTERNS
+    CryptoName.ETH: ETH_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.DASH: DASH_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.XMR: XMR_ADDRESSES_REGEX_PATTERNS
 }
 
 
