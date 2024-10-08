@@ -11,4 +11,7 @@ import ru.mipt.osint_db_service.model.webParsing.WebFoundAddress;
 public interface WebFoundAddressRepository extends JpaRepository<WebFoundAddress, Long> {
     @Query("select wfa from WebFoundAddress wfa order by wfa.foundTime desc")
     Page<WebFoundAddress> getAllOrderByFoundTimeDesc(Pageable pageable);
+
+    @Query("select wfa from WebFoundAddress wfa where wfa.address = :address order by wfa.foundTime desc")
+    Page<WebFoundAddress> getAllIndoAboutOneAddress(Pageable pageable, String address);
 }

@@ -1,14 +1,22 @@
-<div>
+<div ng-controller="found_addressesController">
     <p></p>
     <h3>Каталог адресов</h3>
     <p></p>
 
-    <div class="row g-2">
-        <div class="col-6 col-md-2">
-            <button ng-click="loadFoundAddresses()">Обновить</button>
+    <div class="center_container">
+        <div class="filter_form">
+            <form novalidate ng-submit="loadFoundAddresses()">
+                <div class="form-floating input-group-sm"  style="width: 30%">
+                    <input type="text" name="address" class="form-control" id="filterAddress" placeholder="Крипто-адрес" ng-model="filter.address" required>
+                    <label for="filterAddress" >Крипто-адрес</label>
+                </div>
+                <p></p>
+                <button class="btn btn-outline-warning btn-sm" style="width: 30%" type="submit">Применить</button>
+            </form>
         </div>
-        <div class="col-sm-6 col-md-10">
-            <table class="table table-hover">
+        <p></p>
+        <div class="addresses_table">
+            <table class="table table-hover" style="width: 95%">
                 <tr>
 <!--                    <td hidden>ID</td>-->
                     <td>Время</td>

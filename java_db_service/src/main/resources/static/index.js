@@ -1,14 +1,14 @@
 (function () {
     angular
-        .module('new-booking-front', ['ngRoute', 'ngStorage'])
+        .module('crypto-osint-front', ['ngRoute', 'ngStorage'])
         .config(config)
         .run(run);
 
     function config($routeProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'welcome/welcome.html',
-                controller: 'welcomeController'
+                templateUrl: 'main_info/main_info.html',
+                controller: 'main_infoController'
             })
             .when('/found_web_addresses', {
                 templateUrl: 'found_addresses/found_web_addresses.html',
@@ -54,7 +54,7 @@
     }
 })();
 
-angular.module('new-booking-front').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
+angular.module('crypto-osint-front').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     $scope.tryToAuth = function () {
         $http.post('http://localhost:5555/auth/api/v1/auth', $scope.user)
             .then(function successCallback(response) {

@@ -1,5 +1,5 @@
 
-angular.module('new-booking-front').controller('found_addressesController', function ($scope, $http, $location, $localStorage) {
+angular.module('crypto-osint-front').controller('found_addressesController', function ($scope, $http, $location, $localStorage) {
     const contextPath = 'http://localhost:8190/OSINT/';
 
     $scope.loadFoundAddresses = function (pageIndex = 1) {
@@ -8,7 +8,7 @@ angular.module('new-booking-front').controller('found_addressesController', func
             method: 'GET',
             params: {
                 p: pageIndex,
-                // city_part: $scope.filter ? $scope.filter.city_part : null,
+                address: $scope.filter ? $scope.filter.address : null,
                 // min_price: $scope.filter ? $scope.filter.min_price : null,
                 // max_price: $scope.filter ? $scope.filter.max_price : null,
                 // min_square_meters: $scope.filter ? $scope.filter.min_square_meters : null,

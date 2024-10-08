@@ -7,4 +7,17 @@ input:required:invalid {
   border-color: #c00000;
 }
 
+.addresses_table{
+  margin-left: auto;
+  margin-right: auto;
+}
 
+.filter_form{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center_container{
+  margin-left: auto;
+  margin-right: auto;
+}

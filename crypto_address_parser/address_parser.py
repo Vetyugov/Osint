@@ -70,7 +70,7 @@ PATTERNS = {
 
 class CryptoAddressParser:
 
-    def __init__(self, context_size: int = 500):
+    def __init__(self, context_size: int = 1024):
         """
         Парсер крипто адресов
         :param context_size: количество символов слева и справа от найденного слова, которые нужно взять в контекст

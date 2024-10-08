@@ -1,9 +1,9 @@
 <!doctype html>
 
-<html ng-app="new-booking-front">
+<html ng-app="crypto-osint-front">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -19,12 +19,12 @@
 
 <body>
 
-<div class="container" ng-controller="indexController">
+<div ng-controller="indexController">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#!/">OSINT</a>
+                    <a class="nav-link" href="#!/main_info">OSINT</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#!/found_web_addresses">Каталог адресов</a>
@@ -78,6 +78,7 @@
 
     <script src="index.js"></script>
     <script src="found_addresses/found_web_addresses.js"></script>
+    <script src="main_info/main_info.js"></script>
 </div>
 
 <div>
@@ -90,7 +91,7 @@
                 <div class="col-md-3 col-6">
                     <h4>Информация</h4>
                     <ul class="list-unstyled">
-                        <li><a href="#!/welcome">Главная</a></li>
+                        <li><a href="#!/main_info">Главная</a></li>
                     </ul>
                 </div>
             </div>
