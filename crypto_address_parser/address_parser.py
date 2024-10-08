@@ -13,7 +13,19 @@ class CryptoName(enum.Enum):
     ETH = 1
     DASH = 2
     XMR = 3
-
+    ADA = 4
+    ATOM = 5
+    DOGE = 6
+    MIOTA = 7
+    LSK = 8
+    LTC = 9
+    XEM = 10
+    NEO = 11
+    ONT = 12
+    DOT = 13
+    XRP = 14
+    XLM = 15
+    UNIVERSAL = 16
 
 class CheckCryptoResponse:
     """
@@ -78,16 +90,145 @@ XMR_ADDRESSES_REGEX_PATTERNS = {
     'XMR address full': re.compile(r'/4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$', re.M | re.S)
 
 }
+
+# Далее паттерны взяты с ресурса https://publication.osintambition.org/20-regular-expressions-examples-to-search-for-data-related-to-cryptocurrencies-43e31dd4a5dc?gi=3c99d49b6af8
+
+# Cardano (ADA)
+ADA_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'ADA address': re.compile(r'[^a-z0-9A-Z/]addr1[a-z0–9][^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'ADA address full': re.compile(r'addr1[a-z0–9]', re.M | re.S)
+}
+# ATOM
+ATOM_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'ATOM address': re.compile(r'[^a-z0-9A-Z/]cosmos[a-zA-Z0–9_.-]{10,}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'ATOM address full': re.compile(r'cosmos[a-zA-Z0–9_.-]{10,}', re.M | re.S)
+}
+
+# DOGE
+DOGE_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'DOGE address': re.compile(r'[^a-z0-9A-Z/]\sD[a-zA-Z0–9_.-]{33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'DOGE address full': re.compile(r'\sD[a-zA-Z0–9_.-]{33}', re.M | re.S)
+}
+
+# IOTA (MIOTA)
+MIOTA_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'MIOTA address': re.compile(r'[^a-z0-9A-Z/]iota[a-z0–9]{10,}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'MIOTA address full': re.compile(r'iota[a-z0–9]{10,}', re.M | re.S)
+}
+
+# Lisk (LSK)
+LSK_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'LSK address': re.compile(r'[^a-z0-9A-Z/][0–9]{19}L[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'LSK address full': re.compile(r'[0–9]{19}L', re.M | re.S)
+}
+
+# LTC
+LTC_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'LTC address': re.compile(r'[^a-z0-9A-Z/][LM3][a-km-zA-HJ-NP-Z1–9]{26,33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'LTC address full': re.compile(r'[LM3][a-km-zA-HJ-NP-Z1–9]{26,33}', re.M | re.S)
+}
+
+# NEM (XEM)
+XEM_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'XEM address': re.compile(r'[^a-z0-9A-Z/][N][A-Za-z0–9-]{37,52}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'XEM address full': re.compile(r'[N][A-Za-z0–9-]{37,52}', re.M | re.S)
+}
+
+# NEO (NEO)
+NEO_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'NEO address': re.compile(r'[^a-z0-9A-Z/]N[0–9a-zA-Z]{33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'NEO address full': re.compile(r'N[0–9a-zA-Z]{33}', re.M | re.S)
+}
+
+# Ontology (ONT)
+ONT_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'ONT address': re.compile(r'[^a-z0-9A-Z/]A[0–9a-zA-Z]{33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'ONT address full': re.compile(r'A[0–9a-zA-Z]{33}', re.M | re.S)
+}
+
+# Polkadot(DOT)
+DOT_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'DOT address': re.compile(r'[^a-z0-9A-Z/]1[0–9a-zA-Z]{47}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'DOT address full': re.compile(r'1[0–9a-zA-Z]{47}', re.M | re.S)
+}
+
+# Ripple (XRP)
+XRP_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'XRP address': re.compile(r'[^a-z0-9A-Z/]r[0–9a-zA-Z]{33}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'XRP address full': re.compile(r'r[0–9a-zA-Z]{33}', re.M | re.S)
+}
+# Stellar (XLM)
+XLM_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'XLM address': re.compile(r'[^a-z0-9A-Z/]G[0–9A-Z]{40,60}[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'XLM address full': re.compile(r'G[0–9A-Z]{40,60}', re.M | re.S)
+}
+
+#Universal (ETC, USDT, XRP, AAVE, REP, BAND, BAT, LINK, CHZ, COMP, KNC, MKR, OCEAN, OMG, PAN, REN, SNX, UMA, UNI, USDC, YFI, ZRX, 1INCH ....)
+UNIVERSAL_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'UNIVERSAL address': re.compile(r'[^a-z0-9A-Z/]0x[a-fA-F0–9]{40}$[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'UNIVERSAL address full': re.compile(r'0x[a-fA-F0–9]{40}$', re.M | re.S),
+
+}
 # Словарь всех паттернов
 PATTERNS = {
     CryptoName.BTC: BTC_ADDRESSES_REGEX_PATTERNS,
     CryptoName.ETH: ETH_ADDRESSES_REGEX_PATTERNS,
     CryptoName.DASH: DASH_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.XMR: XMR_ADDRESSES_REGEX_PATTERNS
+    CryptoName.XMR: XMR_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.ADA: ADA_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.ATOM: ATOM_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.DOGE: DOGE_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.MIOTA: MIOTA_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.LSK: LSK_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.LTC: LTC_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.XEM: XEM_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.NEO: NEO_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.ONT: ONT_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.DOT: DOT_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.XRP: XRP_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.XLM: XLM_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.UNIVERSAL: UNIVERSAL_ADDRESSES_REGEX_PATTERNS
+
 }
-
-
-# TODO: Дополнить списки
 
 
 class CryptoAddressParser:
