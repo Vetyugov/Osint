@@ -8,10 +8,12 @@ from crypto_address_parser.address_parser import CryptoAddressParser
 from db_service import DataBaseService, WebParsedLink, WebFoundAddress
 from datetime import datetime
 
-# TODO: 1. Добавить поиск других крипто адресов
+# TODO: 1. Добавлять всю html в БД
 # TODO: 2. На фронте добавить больше функционала
 # TODO: 3. Написать docker.compose для автоматического развертывания приложения
 # TODO: 4. Обрезать контекст по предложению
+# TODO: 5. Научиться работать с динамическими сайтами (взять самый нужный один)
+# TODO: 6. Сделать тг бота для поиска и алертинга
 
 logging.basicConfig(level=logging.INFO, filename="metrics_log.log", filemode="w")
 # Время врохода по каждой ссылке
@@ -60,11 +62,11 @@ def recursive_search(link, from_link=None, recursion_depth=0):
     try_count += 1
 
     metric_read_html = time.time()
-    text = get_text_from_url(link)
+    parsed_html = get_text_from_url(link)
     metric_times_single.insert(0, (time.time() - metric_read_html))
-    if text is not None:
+    if parsed_html is not None:
         metric_parse = time.time()
-        found = crypto_address_parser.check_is_text_contains_crypto(text, source=link)
+        found = crypto_address_parser.check_is_text_contains_crypto(parsed_html.text, parsed_html.html, source=link)
         metric_times_single.insert(1, (time.time() - metric_parse))
         if len(found) > 0:
             print(f'найден адрес {found}')

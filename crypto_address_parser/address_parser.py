@@ -1,4 +1,5 @@
 import enum
+import logging
 # для regex
 import re
 
@@ -28,6 +29,7 @@ class CryptoName(enum.Enum):
     TRC_20 = 16
     TRX = 17
     UNIVERSAL = 18
+
 
 class CheckCryptoResponse:
     """
@@ -283,15 +285,16 @@ class CryptoAddressParser:
         re_text = pattern.findall
         return set(re_text(text))
 
-    def __get_context_from_text(self, text: str, target: str):
+    def __get_context_from_text(self, text: str, html: str, target: str):
         """
         Находит контекст в text, в котором был найден target
         Если в тексте нет target - возвращает путую строку
         :param text: текст, в котором найден адрес
+        :param html: исходная HTML страница
         :param target: слово, вокруг которого нужно взять контекст
         :return: контекст
         """
-        text = re.sub(" +", " ", text)#Убираем лишние пробелы
+        text = re.sub(" +", " ", text)  #Убираем лишние пробелы
         text = re.sub("\n+", "\n", text)  # Убираем лишние переносы строк
         start = text.index(target)
         if start == -1:
@@ -304,20 +307,26 @@ class CryptoAddressParser:
             right = len(text)
         return text[left: right]
 
-
-    def __get_web_context(self, text: str, target: str):
+    def get_web_context(self, text: str, html: str, target: str):
         """
         Находит в text тег HTML в котором указан target.
         :param text: текст, в котором осуществлять поиск
+        :param html: исходная HTML страница
         :param target: искомое слово
         :return: Список всех тегов с содержимым на странице, где есть target
         Если в тексте не нашёлся target - возвращает пустой список
         """
-        soup = BeautifulSoup(text, 'html.parser')
-        footer_element = soup.find(text={target})
-        return footer_element
-
-
+        found = ''
+        soup = BeautifulSoup(html, 'html.parser')
+        child_soup = soup.find_all('p')
+        for i in child_soup:
+            if target in i.text:
+                found += i.text
+                found += '\n---------------------------------------\n'
+        if found == '':
+            logging.warn(f'Не удалось обнаружить элемент {target} на странице {html} в искомых тегах')
+            return text
+        return found
 
     def __cat_not_address_symbols(self, address: str):
         """
@@ -340,20 +349,22 @@ class CryptoAddressParser:
         for crypto_name, pattern_dict in PATTERNS.items():
             for pattern_name, pattern in pattern_dict.items():
                 if self.__check(pattern, word):
-                    found_list.append(CheckCryptoResponse(crypto_name, pattern_name, self.__cat_not_address_symbols(word)))
+                    found_list.append(
+                        CheckCryptoResponse(crypto_name, pattern_name, self.__cat_not_address_symbols(word)))
         return found_list
 
-    def check_is_text_contains_crypto(self, html: str, source: str = ''):
+    def check_is_text_contains_crypto(self, text: str, html: str, source: str = ''):
         """
         Проверяет содержится ли в тексте какой-либо известный крипто адрес
-        :param html: html, в котором нужно осуществлять поиск
+        :param text: text, в котором нужно осуществлять поиск
+        :param html: html, исходная страница, в которой нужно осуществлять поиск
         :param source: источник, в котором был найден текст (ссылка на статью, ТГ канал и пр)
         :return: список найденных адресов (list of CheckCryptoResponse)
         """
         found_list_rs = []
         for crypto_name, pattern_dict in PATTERNS.items():
             for pattern_name, pattern in pattern_dict.items():
-                found = self.__checkIfTextHasPattern(pattern, html)
+                found = self.__checkIfTextHasPattern(pattern, text)
                 if len(found) != 0:
                     for f in found:
                         found_list_rs.append(
@@ -361,7 +372,7 @@ class CryptoAddressParser:
                                 crypto_name,
                                 pattern_name,
                                 self.__cat_not_address_symbols(f),
-                                self.__get_context_from_text(html, f),
+                                self.get_web_context(text, html, f),
                                 source)
                         )
         return found_list_rs
@@ -387,7 +398,6 @@ if __name__ == '__main__':
         source='какая-то ссылка или источник'
     )
     print('Если в тексте 2 адреса = ' + str(list_of_results))
-
 
     #отдельная проверка конкретного слова, является ли оно крипто адресом
     crypto_parser = CryptoAddressParser()

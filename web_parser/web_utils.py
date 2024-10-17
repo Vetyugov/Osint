@@ -12,6 +12,11 @@ from selenium import webdriver
 ATTEMPTS = 2  # Кол-во попыток получения ответа
 
 
+class ParsedWebHtml:
+    def __init__(self, html, text):
+        self.html = html
+        self.text = text
+
 def get_json_from(url):
     """Отправка запроса на сервер
 
@@ -37,7 +42,6 @@ def get_static_html_from(url):
 
     :param str url: Ссылка
     :return: Ответ сервера или None в виде строки
-    :rtype: dict | None
     """
     for i in range(ATTEMPTS):
         try:
@@ -69,6 +73,8 @@ def get_dynamic_html_from(url):
         print("{} ({})".format(title, url))
     driver.quit()
 
+
+
 def get_text_from_html(html):
     """
     Получить только текст из html
@@ -77,7 +83,7 @@ def get_text_from_html(html):
     """
     if html is not None:
         soup = BeautifulSoup(html, 'html.parser')
-        return soup.get_text()
+        return ParsedWebHtml(html, soup.get_text())
     else:
         return None
 
