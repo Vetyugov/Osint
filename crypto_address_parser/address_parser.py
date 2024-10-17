@@ -25,7 +25,9 @@ class CryptoName(enum.Enum):
     DOT = 13
     XRP = 14
     XLM = 15
-    UNIVERSAL = 16
+    TRC_20 = 16
+    TRX = 17
+    UNIVERSAL = 18
 
 class CheckCryptoResponse:
     """
@@ -208,6 +210,25 @@ UNIVERSAL_ADDRESSES_REGEX_PATTERNS = {
     'UNIVERSAL address full': re.compile(r'0x[a-fA-F0–9]{40}$', re.M | re.S),
 
 }
+
+#TRON (TRC-20)
+TRC_20_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'TRC_20 address': re.compile(r'[^a-z0-9A-Z/]^T[A-Za-z0-9]{33}$[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'TRC_20 address full': re.compile(r'^T[A-Za-z0-9]{33}$', re.M | re.S),
+}
+
+#TRX (Tron)
+TRX_ADDRESSES_REGEX_PATTERNS = {
+    # В тексте
+    'TRC_20 address': re.compile(r'[^a-z0-9A-Z/]^T[1-9a-km-zA-HJ-NP-Z]{33}$[^a-z0-9A-Z]', re.M | re.S),
+
+    # Слово целиком
+    'TRC_20 address full': re.compile(r'^T[1-9a-km-zA-HJ-NP-Z]{33}$', re.M | re.S),
+}
+
 # Словарь всех паттернов
 PATTERNS = {
     CryptoName.BTC: BTC_ADDRESSES_REGEX_PATTERNS,
@@ -226,6 +247,8 @@ PATTERNS = {
     CryptoName.DOT: DOT_ADDRESSES_REGEX_PATTERNS,
     CryptoName.XRP: XRP_ADDRESSES_REGEX_PATTERNS,
     CryptoName.XLM: XLM_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.TRC_20: TRC_20_ADDRESSES_REGEX_PATTERNS,
+    CryptoName.TRX: TRX_ADDRESSES_REGEX_PATTERNS,
     CryptoName.UNIVERSAL: UNIVERSAL_ADDRESSES_REGEX_PATTERNS
 
 }
