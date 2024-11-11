@@ -1,5 +1,6 @@
-import psycopg2
 from datetime import datetime
+
+import psycopg2
 
 
 class WebParsedLink:
@@ -12,7 +13,7 @@ class WebParsedLink:
 
 class WebFoundAddress:
     def __init__(self, id, crypto_name: str, pattern_name: str, address: str, context: str, source: str,
-                 found_time: datetime):
+                 found_time: datetime, valid_address: bool):
         self.id = id
         self.crypto_name = crypto_name
         self.pattern_name = pattern_name
@@ -20,6 +21,7 @@ class WebFoundAddress:
         self.context = context
         self.source = source
         self.found_time = found_time
+        self.valid_address = valid_address
 
 
 class WebSourceLink:
@@ -36,9 +38,10 @@ class WebSourceLink:
         return 'id = ' + str(self.id) + ' , link = ' + self.link + ',  active = ' + str(self.active)
 
 
-
 SQLITE_FILE_PATH = './web_monitoring.sqlite'
 POSTGRES_URL = 'postgresql://osint_admin:osint_admin@localhost:5431/osint_db'
+
+
 class DataBaseService:
     def __init__(self):
         # Создаем подключение к базе данных (файл source будет создан)
@@ -54,7 +57,6 @@ class DataBaseService:
 
     def close_connection(self):
         self.connection.close()
-
 
     def get_all_links_for_analize(self):
         """
@@ -89,14 +91,15 @@ class DataBaseService:
         cursor = self.connection.cursor()
         cursor.execute('SELECT * FROM osint_web.web_found_address')
         web_found_addresses = cursor.fetchall()
-        return [WebFoundAddress(link[0], link[1], link[2], link[3], link[4], link[5], link[6]) for link in
+        return [WebFoundAddress(link[0], link[1], link[2], link[3], link[4], link[5], link[6], link[7]) for link in
                 web_found_addresses]
 
     def save_new_found_address(self, new: WebFoundAddress):
         cursor = self.connection.cursor()
         cursor.execute(
-            'INSERT INTO osint_web.web_found_address (crypto_name, pattern_name, address, context, source, found_time) VALUES (%s, %s, %s, %s, %s, %s)',
-            (new.crypto_name, new.pattern_name, new.address, new.context, new.source, new.found_time.strftime("%Y-%m-%d %H:%M:%S")))
+            'INSERT INTO osint_web.web_found_address (crypto_name, pattern_name, address, context, source, found_time, valid_address) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+            (new.crypto_name, new.pattern_name, new.address, new.context, new.source,
+             new.found_time.strftime("%Y-%m-%d %H:%M:%S"), new.valid_address))
         self.connection.commit()
 
 

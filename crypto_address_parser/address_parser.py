@@ -36,12 +36,14 @@ class CheckCryptoResponse:
     Класс-ответ, в котором описан результат сравнения слова с regex, в случае успешного match
     """
 
-    def __init__(self, crypto_Name: CryptoName, pattern_Name: str, address: str, context: str = '', source: str = ''):
+    def __init__(self, crypto_Name: CryptoName, pattern_Name: str, address: str, context: str = '', source: str = '',
+                 valid_address: bool = False):
         self.crypto_Name = crypto_Name  # Сокращенное название криптовалюты
         self.pattern_Name = pattern_Name  # Название шаблона
         self.address = address  # Найденный адрес
         self.context = context  # Контекст в котором найден адрес
         self.source = source  # Источник
+        self.valid_address = valid_address  # Пройдена проверка валидности адреса
 
     def __str__(self):
         return f'{self.crypto_Name.name} - {self.pattern_Name} address = {self.address} sourse = {self.source} context = {self.context} \n'
@@ -50,17 +52,17 @@ class CheckCryptoResponse:
         return f'{self.crypto_Name.name} - {self.pattern_Name} address = {self.address} sourse = {self.source} context = {self.context} \n'
 
 
-#всё паттерны взяты с сайта https://gist.github.com/MBrassey/623f7b8d02766fa2d826bf9eca3fe005
+# всё паттерны взяты с сайта https://gist.github.com/MBrassey/623f7b8d02766fa2d826bf9eca3fe005
 # \W - Любой символ, кроме буквенного или цифрового символа или знака подчёркивания
 # Паттерны для адресов Биткоина
 BTC_ADDRESSES_REGEX_PATTERNS = {
-    #В тексте
+    # В тексте
     'BTC Legacy address': re.compile(r'[^a-z0-9A-Z/]1[a-z0-9A-Z]{25,33}[^a-z0-9A-Z]', re.M | re.S),
     'BTC P2SH address': re.compile(r'[^a-z0-9A-Z/]3[a-z0-9A-Z]{25,33}[^a-z0-9A-Z]', re.M | re.S),
     'BTC Segwit address': re.compile(r'[^a-z0-9A-Z/]bc1[a-z0-9A-Z]{23,42}[^a-z0-9A-Z]', re.M | re.S),
     'BTC Taproot address': re.compile(r'[^a-z0-9A-Z/]bc1p[a-z0-9A-Z]{23,42}[^a-z0-9A-Z]', re.M | re.S),
 
-    #Слово целиком
+    # Слово целиком
     'BTC Legacy address full': re.compile(r'^1[a-z0-9A-Z]{25,33}$', re.M | re.S),
     'BTC P2SH address full': re.compile(r'^3[a-z0-9A-Z]{25,33}$', re.M | re.S),
     'BTC Segwit address full': re.compile(r'^bc1[a-z0-9A-Z]{23,42}$', re.M | re.S),
@@ -70,10 +72,10 @@ BTC_ADDRESSES_REGEX_PATTERNS = {
 # Паттерны для адресов Эфира
 ETH_ADDRESSES_REGEX_PATTERNS = {
     # All Ethereum addresses have a length of 40 hexadecimal characters and begin with “0x”
-    #В тексте
+    # В тексте
     'ETH address': re.compile(r'[^a-z0-9A-Z/]0x[0-9A-Fa-f]{40}[^a-z0-9A-Z]', re.M | re.S),
 
-    #Слово целиком
+    # Слово целиком
     'ETH address full': re.compile(r'^0x[0-9A-Fa-f]{40}$', re.M | re.S)
 }
 
@@ -85,7 +87,7 @@ DASH_ADDRESSES_REGEX_PATTERNS = {
     'DASH address full': re.compile(r'/X[1-9A-HJ-NP-Za-km-z]{33}$', re.M | re.S)
 }
 
-#Monero (XMR)
+# Monero (XMR)
 XMR_ADDRESSES_REGEX_PATTERNS = {
     # В тексте
     'XMR address': re.compile(r'[^a-z0-9A-Z/]/4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}[^a-z0-9A-Z]', re.M | re.S),
@@ -203,7 +205,7 @@ XLM_ADDRESSES_REGEX_PATTERNS = {
     'XLM address full': re.compile(r'G[0–9A-Z]{40,60}', re.M | re.S)
 }
 
-#Universal (ETC, USDT, XRP, AAVE, REP, BAND, BAT, LINK, CHZ, COMP, KNC, MKR, OCEAN, OMG, PAN, REN, SNX, UMA, UNI, USDC, YFI, ZRX, 1INCH ....)
+# Universal (ETC, USDT, XRP, AAVE, REP, BAND, BAT, LINK, CHZ, COMP, KNC, MKR, OCEAN, OMG, PAN, REN, SNX, UMA, UNI, USDC, YFI, ZRX, 1INCH ....)
 UNIVERSAL_ADDRESSES_REGEX_PATTERNS = {
     # В тексте
     'UNIVERSAL address': re.compile(r'[^a-z0-9A-Z/]0x[a-fA-F0–9]{40}$[^a-z0-9A-Z]', re.M | re.S),
@@ -213,7 +215,7 @@ UNIVERSAL_ADDRESSES_REGEX_PATTERNS = {
 
 }
 
-#TRON (TRC-20)
+# TRON (TRC-20)
 TRC_20_ADDRESSES_REGEX_PATTERNS = {
     # В тексте
     'TRC_20 address': re.compile(r'[^a-z0-9A-Z/]^T[A-Za-z0-9]{33}$[^a-z0-9A-Z]', re.M | re.S),
@@ -222,7 +224,7 @@ TRC_20_ADDRESSES_REGEX_PATTERNS = {
     'TRC_20 address full': re.compile(r'^T[A-Za-z0-9]{33}$', re.M | re.S),
 }
 
-#TRX (Tron)
+# TRX (Tron)
 TRX_ADDRESSES_REGEX_PATTERNS = {
     # В тексте
     'TRC_20 address': re.compile(r'[^a-z0-9A-Z/]^T[1-9a-km-zA-HJ-NP-Z]{33}$[^a-z0-9A-Z]', re.M | re.S),
@@ -294,7 +296,7 @@ class CryptoAddressParser:
         :param target: слово, вокруг которого нужно взять контекст
         :return: контекст
         """
-        text = re.sub(" +", " ", text)  #Убираем лишние пробелы
+        text = re.sub(" +", " ", text)  # Убираем лишние пробелы
         text = re.sub("\n+", "\n", text)  # Убираем лишние переносы строк
         start = text.index(target)
         if start == -1:
@@ -328,6 +330,15 @@ class CryptoAddressParser:
             return text
         return found
 
+    def __validate_address(self, address: str, crypto_name: CryptoName):
+        # TODO: Дописать
+        """
+        Проверяет валидный ли адрес
+        :param address: адрес
+        :return: валидный или нет(или не удалось проверить валидность)
+        """
+        return False
+
     def __cat_not_address_symbols(self, address: str):
         """
         Обрезает крайний левый и крайний правый символы адреса, если они не являются числом или буквой
@@ -349,8 +360,14 @@ class CryptoAddressParser:
         for crypto_name, pattern_dict in PATTERNS.items():
             for pattern_name, pattern in pattern_dict.items():
                 if self.__check(pattern, word):
+                    address = self.__cat_not_address_symbols(word)
                     found_list.append(
-                        CheckCryptoResponse(crypto_name, pattern_name, self.__cat_not_address_symbols(word)))
+                        CheckCryptoResponse(
+                            crypto_name,
+                            pattern_name,
+                            address,
+                            valid_address=self.__validate_address(address, crypto_name)
+                        ))
         return found_list
 
     def check_is_text_contains_crypto(self, text: str, html: str, source: str = ''):
@@ -399,11 +416,11 @@ if __name__ == '__main__':
     )
     print('Если в тексте 2 адреса = ' + str(list_of_results))
 
-    #отдельная проверка конкретного слова, является ли оно крипто адресом
+    # отдельная проверка конкретного слова, является ли оно крипто адресом
     crypto_parser = CryptoAddressParser()
-    #Позитивный кейс
+    # Позитивный кейс
     result = crypto_parser.check_is_word_any_crypto('33yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL')
     print('Слово является крипто адресом = ' + str(result))
-    #Неготивный кейс
+    # Неготивный кейс
     result = crypto_parser.check_is_word_any_crypto('asd3yPjjSMGHPp8zj1ZXySNJzSUfVSbpXEuL')
     print('Слово НЕ является крипто адресом = ' + str(result))

@@ -74,7 +74,7 @@ def recursive_search(link, from_link=None, recursion_depth=0):
             for f in found:
                 db_service.save_new_found_address(
                     WebFoundAddress(None, f.crypto_Name.name, f.pattern_Name, f.address, f.context, f.source,
-                                    datetime.now()))
+                                    datetime.now(), f.valid_address))
                 results.append(f)
             metric_times_single.insert(2, (time.time() - metric_save_db))
     metric_save_db_link = time.time()
