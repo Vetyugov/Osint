@@ -323,7 +323,7 @@ class CryptoAddressParser:
         child_soup = soup.find_all('p')
         for i in child_soup:
             if target in i.text:
-                found += i.text
+                found += ' '.join(i.text.replace("\n", " ").split())
                 found += '\n---------------------------------------\n'
         if found == '':
             logging.warn(f'Не удалось обнаружить элемент {target} на странице {html} в искомых тегах')
@@ -345,9 +345,10 @@ class CryptoAddressParser:
         :param address: адрес
         :return: обрезанный адрес
         """
-        symbols = re.findall('\W', address)
-        for s in symbols:
-            address = address.replace(s, "")
+        while address and not address[0].isalnum():  # Проверяем левый край
+            address = address[1:]
+        while address and not address[-1].isalnum():  # Проверяем правый край
+            address = address[:-1]
         return address
 
     def check_is_word_any_crypto(self, word: str):

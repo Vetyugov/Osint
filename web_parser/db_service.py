@@ -68,17 +68,23 @@ class DataBaseService:
         web_sources_links = cursor.fetchall()
         return [WebSourceLink(link[0], link[1], link[2], link[3]) for link in web_sources_links]
 
-    def get_all_parsed_links(self):
-        cursor = self.connection.cursor()
-        cursor.execute('SELECT * FROM osint_web.web_parsed_link')
-        web_parsed_link = cursor.fetchall()
-        return [WebParsedLink(link[0], link[1], link[2], link[3]) for link in web_parsed_link]
+    # def get_all_parsed_links(self):
+    #     cursor = self.connection.cursor()
+    #     cursor.execute('SELECT * FROM osint_web.web_parsed_link')
+    #     web_parsed_link = cursor.fetchall()
+    #     return [WebParsedLink(link[0], link[1], link[2], link[3]) for link in web_parsed_link]
+    #
+    # def is_link_already_parsed(self, link: str):
+    #     cursor = self.connection.cursor()
+    #     cursor.execute(f'SELECT * FROM osint_web.web_parsed_link where link = \'{link}\' ')
+    #     web_parsed_link = cursor.fetchall()
+    #     return len(web_parsed_link) > 0
 
-    def is_link_already_parsed(self, link: str):
+    def get_not_parsed_links(self, links: list):
         cursor = self.connection.cursor()
-        cursor.execute(f'SELECT * FROM osint_web.web_parsed_link where link = \'{link}\' ')
-        web_parsed_link = cursor.fetchall()
-        return len(web_parsed_link) > 0
+        cursor.execute(f'SELECT * FROM osint_web.web_parsed_link where link in {tuple(links)} ')
+        web_parsed_links = [link[1] for link in cursor.fetchall()]
+        return [link for link in links if link not in web_parsed_links]
 
     def save_new_parsed_link(self, new: WebParsedLink):
         cursor = self.connection.cursor()
@@ -87,12 +93,12 @@ class DataBaseService:
             (new.link, new.link_from, new.last_monitoring_time))
         self.connection.commit()
 
-    def get_all_found_addresses(self):
-        cursor = self.connection.cursor()
-        cursor.execute('SELECT * FROM osint_web.web_found_address')
-        web_found_addresses = cursor.fetchall()
-        return [WebFoundAddress(link[0], link[1], link[2], link[3], link[4], link[5], link[6], link[7]) for link in
-                web_found_addresses]
+    # def get_all_found_addresses(self):
+    #     cursor = self.connection.cursor()
+    #     cursor.execute('SELECT * FROM osint_web.web_found_address')
+    #     web_found_addresses = cursor.fetchall()
+    #     return [WebFoundAddress(link[0], link[1], link[2], link[3], link[4], link[5], link[6], link[7]) for link in
+    #             web_found_addresses]
 
     def save_new_found_address(self, new: WebFoundAddress):
         cursor = self.connection.cursor()

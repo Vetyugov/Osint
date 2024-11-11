@@ -1,8 +1,9 @@
 from urllib.parse import urlparse, urljoin
 
 import colorama
-import requests
 from bs4 import BeautifulSoup
+
+from web_utils import ParsedWebHtml
 
 # запускаем модуль colorama
 colorama.init()
@@ -30,24 +31,23 @@ def is_valid(url):
         return False
 
 
-def get_all_website_links(url, put_internal_links=True, put_external_links=False):
+def get_all_website_links(parsed_html: ParsedWebHtml, put_internal_links=True, put_external_links=False):
     """
     Возвращает все найденные URL-адреса на `url, того же веб-сайта.
     """
     # все URL-адреса `url`
     urls = set()
     # доменное имя URL без протокола
-    domain_name = urlparse(url).netloc
+    domain_name = urlparse(parsed_html.url).netloc
     try:
-
-        soup = BeautifulSoup(requests.get(url).content, "html.parser")
+        soup = BeautifulSoup(parsed_html.html, "html.parser")
         for a_tag in soup.findAll("a"):
             href = a_tag.attrs.get("href")
             if href == "" or href is None:
                 # пустой тег href
                 continue
             # присоединяемся к URL, если он относительный (не абсолютная ссылка)
-            href = urljoin(url, href)
+            href = urljoin(parsed_html.url, href)
             parsed_href = urlparse(href)
             # удалить параметры URL GET, фрагменты URL и т. д.
             href = parsed_href.scheme + "://" + parsed_href.netloc + parsed_href.path
