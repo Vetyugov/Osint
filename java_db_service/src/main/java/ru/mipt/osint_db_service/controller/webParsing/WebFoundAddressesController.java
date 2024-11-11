@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.mipt.osint_db_service.model.webParsing.WebFoundAddress;
-import ru.mipt.osint_db_service.model.webParsing.WebFoundAddress1;
+import ru.mipt.osint_db_service.api.WebFoundAddressDTO;
 import ru.mipt.osint_db_service.service.webParsing.WebFoundAddressService;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class WebFoundAddressesController {
     }
 
     @GetMapping("/aboutOne/{address}")
-    public WebFoundAddress1 getAllInfoAboutAddress(
+    public WebFoundAddressDTO getAllInfoAboutAddress(
             @RequestParam(name = "p", defaultValue = "1") Integer page,
             @PathVariable String address) {
         log.info("Запрос на получение информации по конкретному адресу {}", address);
@@ -44,7 +44,7 @@ public class WebFoundAddressesController {
         log.info("Найдено записей для адреса {} {}: ", address, all.getTotalElements());
         Optional<WebFoundAddress> first = all.stream().findFirst();
         if(first.isPresent()){
-            return WebFoundAddress1.builder().address(address).found(true).state("not confirmed").links_count(all.getTotalElements()).build();
-        } else return WebFoundAddress1.builder().address(address).found(false).state("---").links_count(0L).build();
+            return WebFoundAddressDTO.builder().address(address).found(true).state("not confirmed").links_count(all.getTotalElements()).build();
+        } else return WebFoundAddressDTO.builder().address(address).found(false).state("---").links_count(0L).build();
     }
 }

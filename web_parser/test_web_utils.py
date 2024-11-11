@@ -1,4 +1,4 @@
-from web_utils import get_static_html_from, validate_link, get_text_from_html, get_dynamic_html_from
+from web_utils import get_static_html_from, get_text_from_html, get_dynamic_html_from
 
 if __name__ == '__main__':
     text = get_text_from_html(get_static_html_from("https://bits.media/price/bnb/usdt/"))

@@ -90,4 +90,4 @@ def get_text_from_html(html):
 
 
 def validate_link(url: str):
-    return not url.startswith('http')
+    return url.startswith('http')

@@ -15,7 +15,8 @@ from datetime import datetime
 # TODO: 5. Научиться работать с динамическими сайтами (взять самый нужный один)
 # TODO: 6. Сделать тг бота для поиска и алертинга
 
-logging.basicConfig(level=logging.INFO, filename="metrics_log.log", filemode="w")
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename="metrics_log.log", filemode="w")
 # Время врохода по каждой ссылке
 # Двумерный массив(
 #                   0 - получение html,
@@ -27,12 +28,16 @@ metric_times = []
 # Количество проходов по рекурсии в рамках одной mail_link
 metric_recursion_counter = 0
 
-MAX_RECURSION_DEPTH = 3
+MAX_RECURSION_DEPTH = 1500
 PARSE_URL_AS_STATIC_PAGES = True  # Иначе получить html как динамическую страницу
+SEARCH_EXTERNAL_LINKS = False
+
+
 try_count = 0
 results = []
 
 db_service = DataBaseService()
+
 
 
 def get_text_from_url(link):
@@ -55,11 +60,14 @@ def recursive_search(link, from_link=None, recursion_depth=0):
 
     recursion_depth += 1
     if recursion_depth >= MAX_RECURSION_DEPTH:
-        # print(f'Достигнут предел глубины рекурсии {recursion_depth} из {MAX_RECURSION_DEPTH}')
+        print(f'Достигнут предел глубины рекурсии {recursion_depth} из {MAX_RECURSION_DEPTH}')
         return
 
     global try_count
     try_count += 1
+
+    if metric_recursion_counter % 100:
+        logging.info(f"Ссылок обработано: {metric_recursion_counter}")
 
     metric_read_html = time.time()
     parsed_html = get_text_from_url(link)
@@ -83,9 +91,9 @@ def recursive_search(link, from_link=None, recursion_depth=0):
     metric_times_single.insert(4, (time.time() - metric_start_time))
     metric_times.append(metric_times_single)
 
-    for sub_link in get_all_website_links(link, put_external_links=True):
+    for sub_link in get_all_website_links(link, put_external_links=SEARCH_EXTERNAL_LINKS):
         # print(f'Попытка проанализировать ссылку: {link}')
-        if validate_link(sub_link):
+        if not validate_link(sub_link):
             print(f'Ссылка {sub_link} не валидна')
         elif db_service.is_link_already_parsed(sub_link):
             print(f'Ссылка {sub_link} уже анализировалась')
