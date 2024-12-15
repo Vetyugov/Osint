@@ -44,6 +44,9 @@ POSTGRES_URL = 'postgresql://osint_admin:osint_admin@localhost:5431/osint_db'
 
 class DataBaseService:
     def __init__(self):
+        self.connection = None
+
+    def connect_to_database(self):
         # Создаем подключение к базе данных (файл source будет создан)
         # self.connection = sqlite3.connect(SQLITE_FILE_PATH)
 
@@ -82,7 +85,8 @@ class DataBaseService:
 
     def get_not_parsed_links(self, links: list):
         cursor = self.connection.cursor()
-        cursor.execute(f'SELECT * FROM osint_web.web_parsed_link where link in {tuple(links)} ')
+        cursor.execute(
+            f'SELECT * FROM osint_web.web_parsed_link where link in {tuple(filter(lambda it: str(it).count("'") == 0, links))} ')
         web_parsed_links = [link[1] for link in cursor.fetchall()]
         return [link for link in links if link not in web_parsed_links]
 

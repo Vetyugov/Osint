@@ -1,0 +1,49 @@
+server:
+  #  servlet:
+  #    context-path:
+  #  ????, ?? ??????? ???????? ??????????
+  port: 8090
+
+spring:
+  application:
+    name: Osint_web_service
+  main:
+    banner-mode: off
+  datasource:
+    url: ${POSTGRES_JDBC_URL:jdbc:postgresql://localhost:5450/osint_db}
+    username: ${POSTGRES_USERNAME:osint_admin}
+    password: ${POSTGRES_PASSWORD:osint_admin}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 1
+      auto-commit: false
+  jpa:
+    show-sql: ${SHOW_SQL:true}
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+    #      ddl-auto: validate
+    properties:
+      hibernate.default_schema: ${POSTGRES_SCHEMA:tutor_main}
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: INFO
+    ru.bitok.osint.osint_web_service: DEBUG
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

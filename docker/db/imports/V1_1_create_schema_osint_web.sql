@@ -1,0 +1,1 @@
+CREATE SCHEMA IF NOT EXISTS osint_web_v2;

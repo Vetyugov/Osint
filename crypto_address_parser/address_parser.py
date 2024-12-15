@@ -239,21 +239,23 @@ PATTERNS = {
     CryptoName.ETH: ETH_ADDRESSES_REGEX_PATTERNS,
     CryptoName.DASH: DASH_ADDRESSES_REGEX_PATTERNS,
     CryptoName.XMR: XMR_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.ADA: ADA_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.ATOM: ATOM_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.DOGE: DOGE_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.MIOTA: MIOTA_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.LSK: LSK_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.LTC: LTC_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.XEM: XEM_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.NEO: NEO_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.ONT: ONT_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.DOT: DOT_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.XRP: XRP_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.XLM: XLM_ADDRESSES_REGEX_PATTERNS,
     CryptoName.TRC_20: TRC_20_ADDRESSES_REGEX_PATTERNS,
     CryptoName.TRX: TRX_ADDRESSES_REGEX_PATTERNS,
-    CryptoName.UNIVERSAL: UNIVERSAL_ADDRESSES_REGEX_PATTERNS
+
+    # CryptoName.ADA: ADA_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.ATOM: ATOM_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.DOGE: DOGE_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.MIOTA: MIOTA_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.LSK: LSK_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.LTC: LTC_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.XEM: XEM_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.NEO: NEO_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.ONT: ONT_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.DOT: DOT_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.XRP: XRP_ADDRESSES_REGEX_PATTERNS,
+    # CryptoName.XLM: XLM_ADDRESSES_REGEX_PATTERNS,
+    #
+    # CryptoName.UNIVERSAL: UNIVERSAL_ADDRESSES_REGEX_PATTERNS
 
 }
 
@@ -322,8 +324,10 @@ class CryptoAddressParser:
         soup = BeautifulSoup(html, 'html.parser')
         child_soup = soup.find_all('p')
         for i in child_soup:
+            text = i.text
             if target in i.text:
-                found += ' '.join(i.text.replace("\n", " ").split())
+                text = re.sub(" +", " ", text)  # Убираем лишние пробелы
+                found = re.sub("\n+", "\n", text)  # Убираем лишние переносы строк
                 found += '\n---------------------------------------\n'
         if found == '':
             logging.warn(f'Не удалось обнаружить элемент {target} на странице {html} в искомых тегах')

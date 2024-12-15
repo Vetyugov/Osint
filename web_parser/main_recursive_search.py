@@ -2,6 +2,7 @@ import logging
 
 import time
 from datetime import datetime
+import traceback
 
 from crypto_address_parser.address_parser import CryptoAddressParser
 from db_service import DataBaseService, WebParsedLink, WebFoundAddress
@@ -17,21 +18,23 @@ from web_utils import get_response_from, validate_link, get_text_from_html
 # TODO: 6. Сделать тг бота для поиска и алертинга
 
 FORMAT = '%(asctime)s %(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, filename="metrics_log.log", filemode="w")
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename="metrics.log", filemode="w")
 
 # Количество проходов по рекурсии в рамках одной mail_link
 metric_recursion_counter = 0
 
-MAX_RECURSION_DEPTH = 200
+MAX_RECURSION_DEPTH = 150
 PARSE_URL_AS_STATIC_PAGES = True  # Иначе получить html как динамическую страницу
 SEARCH_EXTERNAL_LINKS = False
 
 try_count = 0
 results = []
 
-current_metrics_list=[]
+current_metrics_list = []
 
 db_service = DataBaseService()
+db_service.connect_to_database()
+
 crypto_address_parser = CryptoAddressParser()
 
 
@@ -42,8 +45,9 @@ def get_parsed_web_html_from_url(link):
     if link.endswith('.pdf') or link.endswith('.xlsx') or link.endswith('.xls') or link.endswith(
             '.doc') or link.endswith('download'):
         print(f'Необходим обработчик для ФАЙЛА: {link}')
-        with open('documents.txt', 'a', encoding='utf-8') as file:  # 'utf-8' кодировка помогает поддерживать различные символы
-            file.write(f'Необходим обработчик для ФАЙЛА: {link}')  # Добавление текста
+        with open('documents.txt', 'a',
+                  encoding='utf-8') as file:  # 'utf-8' кодировка помогает поддерживать различные символы
+            file.write(f'Необходим обработчик для ФАЙЛА: {link} \n')  # Добавление текста
         return None
     if PARSE_URL_AS_STATIC_PAGES:
         return get_text_from_html(link, get_response_from(link))
@@ -52,10 +56,12 @@ def get_parsed_web_html_from_url(link):
 
 
 def recursive_search(link, from_link=None, recursion_depth=0):
+    global metric_recursion_counter
+    global current_metrics_list
     try:
 
         start = time.time()
-        global metric_recursion_counter
+
         metric_recursion_counter += 1
 
         recursion_depth += 1
@@ -66,18 +72,17 @@ def recursive_search(link, from_link=None, recursion_depth=0):
         global try_count
         try_count += 1
 
-        global current_metrics_list
-
-        if metric_recursion_counter % 10 == 0:
+        if metric_recursion_counter % 100 == 0:
             logging.info(f"Ссылок обработано: {metric_recursion_counter}")
+            save_time_start = time.time()
             save_metrics_to_csv(metrics=current_metrics_list)
             current_metrics_list = []
+            logging.info(f"Сохранение метрик заняло : {time.time() - save_time_start}")
 
         get_text_from_url_start = time.time()
         parsed_html = get_parsed_web_html_from_url(link)
         get_text_from_url_delta = time.time() - get_text_from_url_start
 
-        check_is_text_contains_crypto_delta = 0
         save_new_found_address_delta = 0
 
         if parsed_html is not None:
@@ -123,8 +128,11 @@ def recursive_search(link, from_link=None, recursion_depth=0):
                     print(f'Ссылка {sub_link} не валидна')
                 else:
                     recursive_search(sub_link, from_link, recursion_depth)
-    except Exception as e:
-        print(f'Произошла ошибка: {e.with_traceback()}')
+    except:
+        print(f'Произошла ошибка:')
+        print(traceback.print_exc())
+        db_service.close_connection()
+        db_service.connect_to_database()
 
 
 if __name__ == '__main__':
@@ -135,7 +143,7 @@ if __name__ == '__main__':
         metric_recursion_counter = 0
         logging.info(f"Начало обработки ссылки {main_link}")
         start = time.time()
-        recursive_search(main_link.link)
+        recursive_search(main_link.link, from_link=main_link.link)
         logging.info(f"{metric_recursion_counter} ссылок обработано за время {time.time() - start} сек")
 
     db_service.close_connection()
