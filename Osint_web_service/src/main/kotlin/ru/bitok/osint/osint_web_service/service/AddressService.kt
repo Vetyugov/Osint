@@ -11,6 +11,7 @@ import ru.bitok.osint.osint_web_service.entity.WebSourcesLink
 import ru.bitok.osint.osint_web_service.repository.WebFoundAddressRepository
 import ru.bitok.osint.osint_web_service.repository.WebFoundInfoRepository
 import ru.bitok.osint.osint_web_service.repository.WebQueueLinkRepository
+import ru.bitok.osint.osint_web_service.service.addressValidator.AddressValidatorStrategy
 import ru.bitok.osint.osint_web_service.util.AddressParser
 import ru.bitok.osint.osint_web_service.util.WebParser
 import java.time.Instant
@@ -22,6 +23,7 @@ class AddressService(
     val webQueueLinkRepository: WebQueueLinkRepository,
     val addressParser: AddressParser,
     val webParser: WebParser,
+    val addressValidatorStrategy: AddressValidatorStrategy
 ) {
     @Transactional
     fun saveParserResult(link: WebQueueLink) {
@@ -38,6 +40,7 @@ class AddressService(
                         address = parserResult.address
                         cryptoName = parserResult.cryptoName.name
                         patternName = parserResult.patternName
+                        validAddress = addressValidatorStrategy.validate(parserResult.address, parserResult.patternName)
                     }
                 webFoundAddressRepository.save(webFoundAddress).let { savedWebFoundAddress ->
                     webFoundInfoRepository.save(WebFoundInfo().apply {
