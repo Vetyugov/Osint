@@ -24,8 +24,8 @@ class WebFoundAddress {
     @Column(name = "pattern_name", nullable = false, length = Integer.MAX_VALUE)
     var patternName: String = "NOT_STATED"
 
-    @Column(name = "valid_address", nullable = false)
-    var validAddress: Boolean = false
+    @Column(name = "valid_address", nullable = true)
+    var validAddress: Boolean? = null
 
     @Column(name = "create_time")
     var createTime: Instant = Instant.now()

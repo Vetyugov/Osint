@@ -47,5 +47,15 @@ services:
       monitoring:
         aliases:
           - osint-db
+
+#  osint-flyway:
+#    image: flyway/flyway:9.9.0
+#    command: -url='jdbc:postgresql://osint-db:5432/osint_db' -schemas=osint_web_v2 -user=osint_admin -password=osint_admin -connectRetries=60 migrate
+#    volumes:
+#      - ./flyway/sql:/flyway/sql
+#    depends_on:
+#      tutor-db:
+#        condition: service_healthy
+
 networks:
   monitoring:
