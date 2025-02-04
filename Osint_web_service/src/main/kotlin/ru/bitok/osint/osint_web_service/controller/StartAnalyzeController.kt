@@ -12,7 +12,7 @@ import ru.bitok.osint.osint_web_service.service.CircleSearchService
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/analyze")
+@RequestMapping("/api/v1/static/analyze")
 class StartAnalyzeController(
     val addressSearcher: AddressSearcher,
     val circleSearchService: CircleSearchService
@@ -21,14 +21,15 @@ class StartAnalyzeController(
     @PostMapping("/start")
     fun startAnalyzeUrl(
         @RequestParam("url") url: String,
+        @RequestParam("onlyWithSameHost") onlyWithSameHost: Boolean,
         @RequestParam("startCircleThread") startCircleThread: Boolean?
     ) {
         logger.info("Получен запрос на запуск анализа: startCircleThread = $startCircleThread, url = $url")
         if (startCircleThread == null || startCircleThread == false) {
-            addressSearcher.startSearch(url)
+            addressSearcher.startSearch(url, onlyWithSameHost)
         } else {
-            circleSearchService.threadStatus = CircleSearchService.ThreadStatus.RUN
             circleSearchService.analyzingWebSourcesLink = url
+            circleSearchService.onlyWithSameHost = onlyWithSameHost
             circleSearchService.start()
         }
         logger.info("Запрос на запуск анализа отработал успешно")
@@ -38,6 +39,7 @@ class StartAnalyzeController(
     fun stopAnalyze() {
         logger.info("Получен запрос на остановку анализа")
         circleSearchService.stopAnalyze()
+        logger.info("Запрос на остановку анализа выполнен успешно")
     }
 
     companion object {

@@ -8,20 +8,26 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class WebParser {
+class StaticWebParser {
     data class WebParserResult(
-        val onlyTest:String,
+        val onlyText:String,
         val html: String,
         val links: Set<String>,
     )
 
     // Функция для извлечения списка ссылок со страницы
-    fun extractLinks(url: String): WebParserResult? {
+    fun extractLinks(url: String, mainLink:String, onlyWithSameHost: Boolean): WebParserResult? {
         return try {
             val document: Document = Jsoup.connect(url).get()
             val body = document.body()
+            val indexThirdSlash = findThirdSlashIndex(mainLink)
             // Извлечение всех ссылок (href атрибутов) из тега <a>
-            val urls = document.select("a[href]").map { it.attr("abs:href") }.toList()
+            val urls = document.select("a[href]").map { it.attr("abs:href") }.filter { it ->
+                if (onlyWithSameHost and (indexThirdSlash > 0)){
+                    return@filter it.startsWith(mainLink.substring(0, indexThirdSlash))
+                }
+                return@filter true
+            }.toList()
             WebParserResult(body.text(), body.html(), urls.toSet())
         } catch (e: Exception) {
             logger.error("Ошибка при извлечении содердимого url <$url> : ${e.message}")
@@ -55,7 +61,23 @@ class WebParser {
 
             result = result?.let {"Найден в тэге <div>\n$result"}
         }
-        return result?:"Не найден"
+        return result?:document.text()
+    }
+
+
+    private fun findThirdSlashIndex(input: String): Int {
+        var slashCount = 0
+
+        for (i in input.indices) {
+            if (input[i] == '/') {
+                slashCount++
+                if (slashCount == 3) {
+                    return i // Возвращаем индекс третьего слэша
+                }
+            }
+        }
+
+        return -1 // Если третьего слэша нет, возвращаем -1
     }
 
     companion object {

@@ -21,10 +21,37 @@ class AddressBitcoinValidatorTest {
             "1ExBPRJLeYqiJAmZ134ncTwyfFztsXtr8s"
         ]
     )
-    fun checkBitCoinValidation(candidate: String) {
+    fun checkBitCoin1Validation(candidate: String) {
         val addressValidator = AddressBitcoinValidator()
         assertTrue { addressValidator.isValidAddress(candidate) }
     }
 
+    /**
+     * "BTC P2SH address"
+     */
+    @ParameterizedTest(name = "Validation should return true for {0}")
+    @ValueSource(
+        strings = [
+            "36mwXuH4FVaeLuMUsmyU7YvVXKCcuZyP5N"
+        ]
+    )
+    fun checkBitCoin3Validation(candidate: String) {
+        val addressValidator = AddressBitcoinValidator()
+        assertTrue { addressValidator.isValidAddress(candidate) }
+    }
+
+    /**
+     * "BTC P2SH address"
+     */
+    @ParameterizedTest(name = "Validation should return true for {0}")
+    @ValueSource(
+        strings = [
+            "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
+        ]
+    )
+    fun checkBitCoinBc1Validation(candidate: String) {
+        val addressValidator = AddressBitcoinValidator()
+        assertTrue { addressValidator.isValidAddress(candidate) }
+    }
 
 }

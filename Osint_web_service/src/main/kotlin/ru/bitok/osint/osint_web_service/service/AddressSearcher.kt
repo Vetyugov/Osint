@@ -18,29 +18,36 @@ class AddressSearcher(
 ) {
 
 
-    fun startSearch(url: String) {
+    fun startSearch(url: String, onlyWithSameHost: Boolean) {
         val notAnalyzedListOfLink = webQueueLinkRepository.findNotAnalyzedListOfLink(url, PageRequest.of(0, 20))
         if (notAnalyzedListOfLink.isNotEmpty()) {
             logger.info("Корневая ссылка $url найдена - продолжаем анализ ${notAnalyzedListOfLink.size} ссылок")
-            continueSearch(notAnalyzedListOfLink)
+            webSourcesLinkRepository.findByLink(url)?.let{
+              webSourcesLinkRepository.save(it.apply {
+                  active = true
+                  analyzedTime = Instant.now()
+              })
+            }
+            continueSearch(notAnalyzedListOfLink, onlyWithSameHost)
         } else {
             logger.info("Корневая ссылка $url ещё не анализировалась - запускаем анализ ")
             val webQueueLink = webQueueLinkRepository.save(WebQueueLink().apply {
                 link = url
                 sourceLink = webSourcesLinkRepository.save(WebSourcesLink().apply {
                     this.link = url
+                    active = true
                     analyzedTime = Instant.now()
                 })
                 isAnalyzed = false
             })
-            continueSearch(listOf(webQueueLink))
+            continueSearch(listOf(webQueueLink), onlyWithSameHost)
         }
     }
 
-    private fun continueSearch(links: List<WebQueueLink>) {
+    private fun continueSearch(links: List<WebQueueLink>, onlyWithSameHost: Boolean) {
         links.forEach { link ->
             try {
-                addressService.saveParserResult(link)
+                addressService.saveParserResult(link, onlyWithSameHost)
             } catch (e: Exception) {
                 logger.error("Не удалось произвести анализ ссылки $link", e)
             }
@@ -51,4 +58,12 @@ class AddressSearcher(
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
+    fun stopSearch(url:String){
+        webSourcesLinkRepository.findByLink(url)?.let{
+            webSourcesLinkRepository.save(it.apply {
+                active = false
+                analyzedTime = Instant.now()
+            })
+        }
+    }
 }

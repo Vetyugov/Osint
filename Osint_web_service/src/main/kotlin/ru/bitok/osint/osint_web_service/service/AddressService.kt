@@ -8,12 +8,13 @@ import ru.bitok.osint.osint_web_service.entity.WebFoundAddress
 import ru.bitok.osint.osint_web_service.entity.WebFoundInfo
 import ru.bitok.osint.osint_web_service.entity.WebQueueLink
 import ru.bitok.osint.osint_web_service.entity.WebSourcesLink
+import ru.bitok.osint.osint_web_service.exception.SourceLinkNotFoundException
 import ru.bitok.osint.osint_web_service.repository.WebFoundAddressRepository
 import ru.bitok.osint.osint_web_service.repository.WebFoundInfoRepository
 import ru.bitok.osint.osint_web_service.repository.WebQueueLinkRepository
 import ru.bitok.osint.osint_web_service.service.addressValidator.AddressValidatorStrategy
 import ru.bitok.osint.osint_web_service.util.AddressParser
-import ru.bitok.osint.osint_web_service.util.WebParser
+import ru.bitok.osint.osint_web_service.util.StaticWebParser
 import java.time.Instant
 
 @Service
@@ -22,16 +23,20 @@ class AddressService(
     val webFoundInfoRepository: WebFoundInfoRepository,
     val webQueueLinkRepository: WebQueueLinkRepository,
     val addressParser: AddressParser,
-    val webParser: WebParser,
+    val webParser: StaticWebParser,
     val addressValidatorStrategy: AddressValidatorStrategy
 ) {
     @Transactional
-    fun saveParserResult(link: WebQueueLink) {
+    fun saveParserResult(link: WebQueueLink, onlyWithSameHost: Boolean) {
         //Анализируем ссылку
-        val webParserResult = webParser.extractLinks(link.link)
+        val webParserResult = webParser.extractLinks(
+            link.link,
+            link.sourceLink?.link?:throw SourceLinkNotFoundException(link.link),
+            onlyWithSameHost
+        )
         webParserResult?.also { webResult ->
             //Ищем адрес в тексте
-            val addressParserResults = addressParser.foundInText(webResult.onlyTest)
+            val addressParserResults = addressParser.foundInText(webResult.onlyText)
             logger.info("Найдено ${addressParserResults.size} адресов: $addressParserResults")
             addressParserResults.forEach { parserResult ->
                 //Сохраняем результат поиска
